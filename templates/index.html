@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SevAI - Connecting Volunteers with Communities</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <span class="logo">🤝</span>
+            <span class="brand-name">SevAI</span>
+        </div>
+        <div class="nav-links">
+            <a href="/login">Login</a>
+            <a href="/register" class="btn-primary">Get Started</a>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Connecting <span class="highlight">Volunteers</span> with Communities in Need</h1>
+            <p>SevAI uses the power of Gemini AI to intelligently match volunteers with the most urgent community needs — making social impact smarter and faster.</p>
+            <div class="hero-buttons">
+                <a href="/register" class="btn-primary">Join as Volunteer</a>
+                <a href="/register" class="btn-secondary">Register NGO</a>
+            </div>
+        </div>
+        <div class="hero-image">
+            <div class="floating-card card1">
+                <i class="fas fa-hands-helping"></i>
+                <span>500+ Volunteers</span>
+            </div>
+            <div class="floating-card card2">
+                <i class="fas fa-heart"></i>
+                <span>200+ Needs Met</span>
+            </div>
+            <div class="floating-card card3">
+                <i class="fas fa-robot"></i>
+                <span>AI Powered</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURES SECTION -->
+    <section class="features">
+        <h2>Why SevAI?</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <i class="fas fa-robot"></i>
+                <h3>AI Smart Matching</h3>
+                <p>Gemini AI matches volunteers with needs based on skills, location and availability.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-map-marker-alt"></i>
+                <h3>Location Based</h3>
+                <p>Find volunteer opportunities near you — hyperlocal impact.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-bolt"></i>
+                <h3>Real-time Updates</h3>
+                <p>Get instant notifications when new needs match your skills.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-shield-alt"></i>
+                <h3>Verified NGOs</h3>
+                <p>All NGOs are verified — ensuring authentic community needs.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="how-it-works">
+        <h2>How It Works</h2>
+        <div class="steps">
+            <div class="step">
+                <div class="step-number">1</div>
+                <h3>Register</h3>
+                <p>Sign up as Volunteer or NGO</p>
+            </div>
+            <div class="step-arrow">→</div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <h3>Profile Setup</h3>
+                <p>Add your skills and location</p>
+            </div>
+            <div class="step-arrow">→</div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <h3>AI Matches</h3>
+                <p>Gemini AI finds best matches</p>
+            </div>
+            <div class="step-arrow">→</div>
+            <div class="step">
+                <div class="step-number">4</div>
+                <h3>Make Impact</h3>
+                <p>Connect and create change!</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>Made with ❤️ by Team SevAI | Powered by Gemini AI</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

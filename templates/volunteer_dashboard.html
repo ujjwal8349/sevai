@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SevAI - Volunteer Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+</head>
+<body class="dashboard-page">
+
+    <!-- NAVBAR -->
+    <nav class="navbar dashboard-nav">
+        <div class="nav-brand">
+            <span class="logo">🤝</span>
+            <span class="brand-name">SevAI</span>
+        </div>
+        <div class="nav-center">
+            <span>Volunteer Dashboard</span>
+        </div>
+        <div class="nav-links">
+            <span id="userName">Loading...</span>
+            <button class="btn-logout" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </nav>
+
+    <!-- DASHBOARD CONTENT -->
+    <div class="dashboard-container">
+
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div class="sidebar-profile">
+                <div class="profile-avatar" id="profileAvatar">U</div>
+                <h3 id="sidebarName">Loading...</h3>
+                <p id="sidebarLocation">📍 Location</p>
+            </div>
+            <ul class="sidebar-menu">
+                <li class="active" onclick="showSection('matches')">
+                    <i class="fas fa-robot"></i> AI Matches
+                </li>
+                <li onclick="showSection('needs')">
+                    <i class="fas fa-list"></i> All Needs
+                </li>
+                <li onclick="showSection('profile')">
+                    <i class="fas fa-user"></i> My Profile
+                </li>
+            </ul>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+
+            <!-- AI MATCHES SECTION -->
+            <div id="matchesSection" class="section active">
+                <div class="section-header">
+                    <h2>🤖 AI Matched Needs</h2>
+                    <button class="btn-primary" onclick="findAIMatches()">
+                        <i class="fas fa-magic"></i> Find Matches
+                    </button>
+                </div>
+                <div id="matchesContent">
+                    <div class="empty-state">
+                        <i class="fas fa-robot"></i>
+                        <h3>Click "Find Matches" to let AI find the best opportunities for you!</h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ALL NEEDS SECTION -->
+            <div id="needsSection" class="section">
+                <div class="section-header">
+                    <h2>📋 All Community Needs</h2>
+                    <button class="btn-primary" onclick="loadNeeds()">
+                        <i class="fas fa-refresh"></i> Refresh
+                    </button>
+                </div>
+                <div id="needsContent">
+                    <div class="empty-state">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <h3>Loading needs...</h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PROFILE SECTION -->
+            <div id="profileSection" class="section">
+                <div class="section-header">
+                    <h2>👤 My Profile</h2>
+                </div>
+                <div class="profile-card">
+                    <div class="profile-info">
+                        <div class="info-group">
+                            <label>Full Name</label>
+                            <p id="profileName">-</p>
+                        </div>
+                        <div class="info-group">
+                            <label>Email</label>
+                            <p id="profileEmail">-</p>
+                        </div>
+                        <div class="info-group">
+                            <label>Location</label>
+                            <p id="profileLocation">-</p>
+                        </div>
+                        <div class="info-group">
+                            <label>Skills</label>
+                            <p id="profileSkills">-</p>
+                        </div>
+                        <div class="info-group">
+                            <label>Availability</label>
+                            <p id="profileAvailability">-</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/firebase-config.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/volunteer.js') }}"></script>
+</body>
+</html>

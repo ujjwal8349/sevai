@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SevAI - Admin Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+</head>
+<body class="dashboard-page">
+
+    <!-- NAVBAR -->
+    <nav class="navbar dashboard-nav">
+        <div class="nav-brand">
+            <span class="logo">🤝</span>
+            <span class="brand-name">SevAI</span>
+        </div>
+        <div class="nav-center">
+            <span>⚙️ Admin Dashboard</span>
+        </div>
+        <div class="nav-links">
+            <span id="userName">Admin</span>
+            <button class="btn-logout" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div class="sidebar-profile">
+                <div class="profile-avatar" style="background: #e17055;">⚙️</div>
+                <h3>Admin Panel</h3>
+                <p>SevAI Management</p>
+            </div>
+            <ul class="sidebar-menu">
+                <li class="active" onclick="showSection('overview', this)">
+                    <i class="fas fa-chart-bar"></i> Overview
+                </li>
+                <li onclick="showSection('volunteers', this)">
+                    <i class="fas fa-users"></i> All Volunteers
+                </li>
+                <li onclick="showSection('ngos', this)">
+                    <i class="fas fa-building"></i> All NGOs
+                </li>
+                <li onclick="showSection('needs', this)">
+                    <i class="fas fa-list"></i> All Needs
+                </li>
+            </ul>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+
+            <!-- OVERVIEW SECTION -->
+            <div id="overviewSection" class="section active">
+                <div class="section-header">
+                    <h2>📊 Platform Overview</h2>
+                </div>
+
+                <!-- STATS CARDS -->
+                <div class="stats-grid">
+                    <div class="stat-card" style="border-left: 4px solid #6C63FF;">
+                        <div class="stat-icon" style="background: rgba(108,99,255,0.1);">
+                            <i class="fas fa-users" style="color: #6C63FF;"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="totalVolunteers">0</h3>
+                            <p>Total Volunteers</p>
+                        </div>
+                    </div>
+                    <div class="stat-card" style="border-left: 4px solid #00b894;">
+                        <div class="stat-icon" style="background: rgba(0,184,148,0.1);">
+                            <i class="fas fa-building" style="color: #00b894;"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="totalNGOs">0</h3>
+                            <p>Total NGOs</p>
+                        </div>
+                    </div>
+                    <div class="stat-card" style="border-left: 4px solid #e17055;">
+                        <div class="stat-icon" style="background: rgba(225,112,85,0.1);">
+                            <i class="fas fa-list" style="color: #e17055;"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="totalNeeds">0</h3>
+                            <p>Total Needs</p>
+                        </div>
+                    </div>
+                    <div class="stat-card" style="border-left: 4px solid #fdcb6e;">
+                        <div class="stat-icon" style="background: rgba(253,203,110,0.1);">
+                            <i class="fas fa-check-circle" style="color: #fdcb6e;"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="openNeeds">0</h3>
+                            <p>Open Needs</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RECENT NEEDS -->
+                <div class="section-header" style="margin-top: 40px;">
+                    <h2>🕐 Recent Needs</h2>
+                </div>
+                <div id="recentNeeds"></div>
+            </div>
+
+            <!-- VOLUNTEERS SECTION -->
+            <div id="volunteersSection" class="section">
+                <div class="section-header">
+                    <h2>👥 All Volunteers</h2>
+                    <button class="btn-primary" onclick="loadVolunteers()">
+                        <i class="fas fa-refresh"></i> Refresh
+                    </button>
+                </div>
+                <div id="volunteersContent">
+                    <div class="empty-state">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <h3>Loading...</h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NGOs SECTION -->
+            <div id="ngosSection" class="section">
+                <div class="section-header">
+                    <h2>🏢 All NGOs</h2>
+                    <button class="btn-primary" onclick="loadNGOs()">
+                        <i class="fas fa-refresh"></i> Refresh
+                    </button>
+                </div>
+                <div id="ngosContent">
+                    <div class="empty-state">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <h3>Loading...</h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NEEDS SECTION -->
+            <div id="needsSection" class="section">
+                <div class="section-header">
+                    <h2>📋 All Community Needs</h2>
+                    <button class="btn-primary" onclick="loadAllNeeds()">
+                        <i class="fas fa-refresh"></i> Refresh
+                    </button>
+                </div>
+                <div id="needsContent">
+                    <div class="empty-state">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <h3>Loading...</h3>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/firebase-config.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+</body>
+</html>
