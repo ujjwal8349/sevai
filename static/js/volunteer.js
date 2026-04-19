@@ -53,108 +53,101 @@ function showSection(section) {
 // Load All Needs
 async function loadNeeds() {
     const needsContent = document.getElementById('needsContent');
-    needsContent.innerHTML = '<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><h3>Loading...</h3></div>';
+
+    needsContent.innerHTML = `
+        <div class="empty-state">
+            <i class="fas fa-spinner fa-spin"></i>
+            <h3>Loading needs...</h3>
+        </div>
+    `;
 
     try {
-        const response = await fetch('/api/needs');
-        const data = await response.json();
+        const snapshot = await db.collection('needs').get();
 
-        if (data.success && data.needs.length > 0) {
-            needsContent.innerHTML = data.needs.map(need => `
-                <div class="need-card">
-                    <div class="need-card-header">
-                        <h3>${need.title}</h3>
-                        <span class="urgency-badge urgency-${need.urgency}">${need.urgency}</span>
+        if (!snapshot.empty) {
+            needsContent.innerHTML = snapshot.docs.map(doc => {
+                const need = doc.data();
+
+                return `
+                    <div class="need-card">
+                        <div class="need-card-header">
+                            <h3>${need.title}</h3>
+                            <span>${need.status}</span>
+                        </div>
+
+                        <p>${need.description}</p>
+
+                        <div class="need-card-footer">
+                            <span><i class="fas fa-map-marker-alt"></i> ${need.location}</span>
+                            <span><i class="fas fa-building"></i> ${need.ngo_name || ''}</span>
+                        </div>
+
+                        <div style="margin-top: 10px;">
+                            ${
+                                need.status === 'assigned' &&
+                                need.assignedVolunteers &&
+                                auth.currentUser &&
+                                need.assignedVolunteers.includes(auth.currentUser.uid)
+                                ? `<button class="btn-primary" onclick="acceptTask('${doc.id}')">
+                                        ✔ Accept Task
+                                   </button>`
+                                : ''
+                            }
+
+                            ${
+                            need.status === 'in-progress' &&
+                            need.acceptedBy === auth.currentUser.uid
+                            ? `<button class="btn-primary" onclick="completeTask('${doc.id}')">
+                                    ✅ Mark Completed
+                            </button>`
+                            : ''
+                        }
+
+                        </div>
                     </div>
-                    <p>${need.description}</p>
-                    <div class="need-card-footer">
-                        <span><i class="fas fa-map-marker-alt"></i> ${need.location}</span>
-                        <span><i class="fas fa-building"></i> ${need.ngo_name}</span>
-                        <span><i class="fas fa-circle" style="color: green"></i> ${need.status}</span>
-                    </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         } else {
             needsContent.innerHTML = `
                 <div class="empty-state">
                     <i class="fas fa-list"></i>
-                    <h3>No community needs posted yet!</h3>
-                </div>`;
+                    <h3>No needs available!</h3>
+                </div>
+            `;
         }
+
     } catch (error) {
-        needsContent.innerHTML = '<div class="empty-state"><h3>Error loading needs!</h3></div>';
+        console.error(error);
+        needsContent.innerHTML = `
+            <div class="empty-state">
+                <h3>Error loading needs!</h3>
+            </div>
+        `;
     }
 }
 
-// Find AI Matches
-async function findAIMatches() {
-    const matchesContent = document.getElementById('matchesContent');
-    
-    // Wait for profile to load
-    if (!currentUser) {
-        matchesContent.innerHTML = '<div class="empty-state"><h3>Please wait — loading profile...</h3></div>';
-        return;
-    }
+async function acceptTask(needId) {
+    const user = auth.currentUser;
 
-    matchesContent.innerHTML = '<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><h3>AI is finding best matches for you...</h3></div>';
+    const res = await fetch(`/api/accept/${needId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            volunteerId: user.uid
+        })
+    });
 
-    try {
-        // Get user profile fresh from Firestore
-        const doc = await db.collection('users').doc(currentUser.uid).get();
-        const profile = doc.data();
+    const data = await res.json();
 
-        // Get all needs
-        const needsResponse = await fetch('/api/needs');
-        const needsData = await needsResponse.json();
-
-        if (!needsData.needs || needsData.needs.length === 0) {
-            matchesContent.innerHTML = '<div class="empty-state"><i class="fas fa-robot"></i><h3>No needs available to match!</h3></div>';
-            return;
-        }
-
-        // Call AI Match API
-        const response = await fetch('/api/match', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                volunteer: profile,
-                needs: JSON.stringify(needsData.needs)
-            })
-        });
-
-        const data = await response.json();
-        console.log('AI Response:', data);
-
-        if (data.success) {
-            let matches;
-            try {
-                const cleanText = data.matches.replace(/```json|```/g, '').trim();
-                matches = JSON.parse(cleanText);
-            } catch(e) {
-                console.error('Parse error:', e);
-                matchesContent.innerHTML = '<div class="empty-state"><h3>AI response error! Try again.</h3></div>';
-                return;
-            }
-
-            if (matches.matches && matches.matches.length > 0) {
-                matchesContent.innerHTML = matches.matches.map((match) => `
-                    <div class="match-card">
-                        <span class="match-score">🎯 Match Score: ${match.match_score}%</span>
-                        <h3>${match.need_title}</h3>
-                        <p>${match.reason}</p>
-                    </div>
-                `).join('');
-            } else {
-                matchesContent.innerHTML = '<div class="empty-state"><h3>No matches found!</h3></div>';
-            }
-        } else {
-            matchesContent.innerHTML = `<div class="empty-state"><h3>Error: ${data.error}</h3></div>`;
-        }
-    } catch (error) {
-        console.error('Match error:', error);
-        matchesContent.innerHTML = '<div class="empty-state"><h3>Error finding matches! Try again.</h3></div>';
+    if (data.success) {
+        alert("Task accepted!");
+        loadNeeds();
+    } else {
+        alert("Error!");
     }
 }
+
+
 
 function logout() {
     auth.signOut()
@@ -165,4 +158,25 @@ function logout() {
             console.error("Logout error:", error);
             alert("Logout failed!");
         });
+}
+
+async function completeTask(needId) {
+    const user = auth.currentUser;
+
+    const res = await fetch(`/api/complete/${needId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            volunteerId: user.uid
+        })
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+        alert("Task completed!");
+        loadNeeds();
+    } else {
+        alert("Error completing task!");
+    }
 }

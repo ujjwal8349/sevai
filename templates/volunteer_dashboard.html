@@ -41,9 +41,6 @@
                 <p id="sidebarLocation">📍 Location</p>
             </div>
             <ul class="sidebar-menu">
-                <li class="active" onclick="showSection('matches')">
-                    <i class="fas fa-robot"></i> AI Matches
-                </li>
                 <li onclick="showSection('needs')">
                     <i class="fas fa-list"></i> All Needs
                 </li>
@@ -56,21 +53,6 @@
         <!-- MAIN CONTENT -->
         <div class="main-content">
 
-            <!-- AI MATCHES SECTION -->
-            <div id="matchesSection" class="section active">
-                <div class="section-header">
-                    <h2>🤖 AI Matched Needs</h2>
-                    <button class="btn-primary" onclick="findAIMatches()">
-                        <i class="fas fa-magic"></i> Find Matches
-                    </button>
-                </div>
-                <div id="matchesContent">
-                    <div class="empty-state">
-                        <i class="fas fa-robot"></i>
-                        <h3>Click "Find Matches" to let AI find the best opportunities for you!</h3>
-                    </div>
-                </div>
-            </div>
 
             <!-- ALL NEEDS SECTION -->
             <div id="needsSection" class="section">

@@ -151,37 +151,39 @@ async function loadAllNeeds() {
         const snapshot = await db.collection('needs').get();
 
         if (!snapshot.empty) {
-            needsContent.innerHTML = snapshot.docs.map(doc => {
+            const cards = snapshot.docs.map(doc => {
                 const need = doc.data();
+                
+                // Skip corrupt/empty data
+                if (!need.title) return '';
+                
                 return `
                     <div class="need-card">
                         <div class="need-card-header">
-                            <h3>${need.title}</h3>
-                            <span class="urgency-badge urgency-${need.urgency}">${need.urgency}</span>
+                            <h3>${need.title || 'No Title'}</h3>
+                            <span class="urgency-badge urgency-${need.urgency || 'Low'}">${need.urgency || 'Low'}</span>
                         </div>
-                        <p>${need.description}</p>
+                        <p>${need.description || 'No description'}</p>
                         <div class="need-card-footer">
-                            <span><i class="fas fa-map-marker-alt"></i> ${need.location}</span>
-                            <span><i class="fas fa-building"></i> ${need.ngo_name}</span>
-                            <span><i class="fas fa-circle" style="color: green"></i> ${need.status}</span>
+                            <span><i class="fas fa-map-marker-alt"></i> ${need.location || 'N/A'}</span>
+                            <span><i class="fas fa-building"></i> ${need.ngo_name || 'N/A'}</span>
+                            <span><i class="fas fa-circle" style="color: ${need.status === 'open' ? 'green' : need.status === 'assigned' ? 'blue' : 'orange'}"></i> ${need.status || 'open'}</span>
                         </div>
                         <div style="margin-top: 15px; display: flex; gap: 10px;">
-                            
-                            <button class="btn-primary" 
-                                onclick="autoAssign('${doc.id}')">
+                            <button class="btn-primary" onclick="autoAssign('${doc.id}')">
                                 ⚡ Auto Assign
                             </button>
-
                             <button class="btn-primary" 
                                 style="padding: 8px 20px; font-size: 13px; background: #d63031;"
                                 onclick="deleteNeed('${doc.id}')">
                                 <i class="fas fa-trash"></i> Delete
                             </button>
-
                         </div>
                     </div>
                 `;
-            }).join('');
+            }).filter(Boolean).join('');
+
+            needsContent.innerHTML = cards || '<div class="empty-state"><i class="fas fa-list"></i><h3>No valid needs found!</h3></div>';
         } else {
             needsContent.innerHTML = '<div class="empty-state"><i class="fas fa-list"></i><h3>No needs yet!</h3></div>';
         }

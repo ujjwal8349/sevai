@@ -7,14 +7,21 @@ function selectRole(role) {
 
     document.getElementById('volunteerRole').classList.remove('active');
     document.getElementById('ngoRole').classList.remove('active');
+    document.getElementById('adminRole').classList.remove('active');
     document.getElementById(role + 'Role').classList.add('active');
 
+    // Hide all
+    document.getElementById('volunteerFields').style.display = 'none';
+    document.getElementById('ngoFields').style.display = 'none';
+    document.getElementById('adminFields').style.display = 'none';
+
+    // Show selected
     if (role === 'volunteer') {
         document.getElementById('volunteerFields').style.display = 'block';
-        document.getElementById('ngoFields').style.display = 'none';
-    } else {
-        document.getElementById('volunteerFields').style.display = 'none';
+    } else if (role === 'ngo') {
         document.getElementById('ngoFields').style.display = 'block';
+    } else if (role === 'admin') {
+        document.getElementById('adminFields').style.display = 'block';
     }
 }
 
@@ -85,7 +92,30 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
             showSuccess('Account created! Redirecting...');
             setTimeout(() => window.location.href = '/volunteer', 1500);
 
-        } else {
+        } else if (selectedRole === 'admin') {
+            const adminCode = document.getElementById('adminCode').value;
+            
+            // Secret code check
+            if (adminCode !== 'SEVAI_ADMIN_2026') {
+                showError('Invalid admin secret code!');
+                registerBtn.innerHTML = '<span>Create Account</span><i class="fas fa-arrow-right"></i>';
+                registerBtn.disabled = false;
+                return;
+            }
+
+            await db.collection('users').doc(user.uid).set({
+                name: name,
+                email: email,
+                role: 'admin',
+                location: location,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+            showSuccess('Admin account created! Redirecting...');
+            setTimeout(() => window.location.href = '/admin', 1500);
+        }
+
+        else {
             const ngoName = document.getElementById('ngoName').value;
             const ngoDesc = document.getElementById('ngoDesc').value;
 

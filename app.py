@@ -260,6 +260,23 @@ def accept_need(need_id):
 
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
+    
+
+@app.route('/api/complete/<need_id>', methods=['POST'])
+def complete_need(need_id):
+    try:
+        data = request.json
+        volunteer_id = data['volunteerId']
+
+        db.collection('needs').document(need_id).update({
+            'status': 'completed',
+            'completedBy': volunteer_id
+        })
+
+        return jsonify({'success': True, 'message': 'Task completed!'})
+
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
 
 
 # ==================== RUN ====================

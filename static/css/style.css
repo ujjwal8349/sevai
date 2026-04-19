@@ -34,7 +34,7 @@ body {
 .nav-brand {
     display: flex;
     align-items: center;
-    gap: 10px;
+    
 }
 
 .logo {
@@ -910,4 +910,63 @@ select {
 .stat-info p {
     font-size: 13px;
     color: #999;
+}
+
+.hero {
+    background: 
+        linear-gradient(rgba(106, 90, 205, 0.7), rgba(128, 0, 128, 0.7)),
+        url('/static/images/children.jpg');
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.hero-overlay {
+    background: rgba(0,0,0,0.5);
+    height: 100%;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 20px;
+    color: white;
+}
+
+.ngo-gallery {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.gallery-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    text-align: center;
+    transition: 0.3s;
+}
+
+.gallery-card:hover {
+    transform: scale(1.03);
+}
+
+.gallery-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+.gallery-card p {
+    padding: 10px;
+    font-weight: bold;
+}
+
+.logo-img {
+    width: 35px;
+    height: 35px;
+    object-fit: contain;
+    margin-right: 8px;
 }

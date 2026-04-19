@@ -48,6 +48,11 @@
                     <h3>NGO</h3>
                     <p>We need volunteers</p>
                 </div>
+                <div class="role-card" id="adminRole" onclick="selectRole('admin')">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>Admin</h3>
+                    <p>Platform manager</p>
+                </div>
             </div>
 
             <form id="registerForm">
@@ -118,6 +123,17 @@
                         <div class="input-wrapper">
                             <i class="fas fa-info-circle"></i>
                             <input type="text" id="ngoDesc" placeholder="What does your NGO do?">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin Fields -->
+                <div id="adminFields" style="display:none;">
+                    <div class="form-group">
+                        <label>Admin Secret Code</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-key"></i>
+                            <input type="password" id="adminCode" placeholder="Enter secret admin code">
                         </div>
                     </div>
                 </div>

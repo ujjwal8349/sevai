@@ -35,11 +35,38 @@ const observer = new IntersectionObserver((entries) => {
             entry.target.style.transform = 'translateY(0)';
         }
     });
-}, observerOptions);
+});
 
 document.querySelectorAll('.feature-card, .step').forEach(card => {
     card.style.opacity = '0';
     card.style.transform = 'translateY(30px)';
     card.style.transition = 'all 0.6s ease';
     observer.observe(card);
+});
+
+
+async function loadStats() {
+    try {
+        const volSnap = await db.collection('users')
+            .where('role', '==', 'volunteer')
+            .get();
+        document.getElementById('volCount').innerText = volSnap.size;
+
+        const ngoSnap = await db.collection('users')
+            .where('role', '==', 'ngo')
+            .get();
+        document.getElementById('ngoCount').innerText = ngoSnap.size;
+
+        const needsSnap = await db.collection('needs')
+            .where('status', '==', 'completed')
+            .get();
+        document.getElementById('needsCount').innerText = needsSnap.size;
+
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    loadStats();
 });
