@@ -4,17 +4,14 @@ function togglePassword() {
     password.type = password.type === 'password' ? 'text' : 'password';
 }
 
-// Show Error Message
 function showError(msg) {
     const errorMsg = document.getElementById('errorMsg');
     errorMsg.textContent = msg;
     errorMsg.style.display = 'block';
 }
 
-// Hide Error Message
 function hideError() {
-    const errorMsg = document.getElementById('errorMsg');
-    errorMsg.style.display = 'none';
+    document.getElementById('errorMsg').style.display = 'none';
 }
 
 // Email/Password Login
@@ -33,17 +30,17 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
         const userCredential = await auth.signInWithEmailAndPassword(email, password);
         const user = userCredential.user;
 
-        // Get user role from Firestore
+        // Get role from Firestore
         const doc = await db.collection('users').doc(user.uid).get();
 
         if (doc.exists) {
             const role = doc.data().role;
-            if (role === 'volunteer') {
-                window.location.href = '/volunteer';
+            if (role === 'admin') {
+                window.location.href = '/admin';
             } else if (role === 'ngo') {
                 window.location.href = '/ngo';
-            } else if (role === 'admin') {
-                window.location.href = '/admin';
+            } else {
+                window.location.href = '/volunteer';
             }
         } else {
             window.location.href = '/volunteer';
@@ -77,20 +74,18 @@ document.getElementById('googleBtn').addEventListener('click', async () => {
         const result = await auth.signInWithPopup(provider);
         const user = result.user;
 
-        // Check if user exists in Firestore
         const doc = await db.collection('users').doc(user.uid).get();
 
         if (doc.exists) {
             const role = doc.data().role;
-            if (role === 'volunteer') {
-                window.location.href = '/volunteer';
+            if (role === 'admin') {
+                window.location.href = '/admin';
             } else if (role === 'ngo') {
                 window.location.href = '/ngo';
             } else {
                 window.location.href = '/volunteer';
             }
         } else {
-            // New user — save to Firestore
             await db.collection('users').doc(user.uid).set({
                 name: user.displayName,
                 email: user.email,

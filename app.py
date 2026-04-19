@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, render_template, session
 from flask_cors import CORS
+from flask import redirect, request
 from dotenv import load_dotenv
 import os
 from google import genai
@@ -175,6 +176,91 @@ def update_need(need_id):
         return jsonify({'success': True, 'message': 'Status updated!'})
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
+
+@app.route('/api/auto-assign/<need_id>', methods=['POST'])
+def auto_assign(need_id):
+    try:
+        need_doc = db.collection('needs').document(need_id).get()
+
+        if not need_doc.exists:
+            return jsonify({'success': False, 'error': 'Need not found'})
+
+        need = need_doc.to_dict()
+
+        volunteers = db.collection('volunteers').stream()
+
+        selected_volunteers = []
+
+        # 🔍 Matching logic (location based)
+        for v in volunteers:
+            vol = v.to_dict()
+
+            # 👉 Step 1: Location match
+            if vol.get('location', '').strip().lower() == need.get('location', '').strip().lower():
+
+                # 👉 Step 2: Skill match
+                volunteer_skills = vol.get('skills', '').lower()
+                need_skills = need.get('skills', '').lower()
+
+                # simple skill match (at least one skill common)
+                if any(skill.strip() in volunteer_skills for skill in need_skills.split(',')):
+                    
+                    selected_volunteers.append(v.id)
+
+                    if len(selected_volunteers) == need.get('requiredVolunteers', 1):
+                        break
+
+        required = need.get('requiredVolunteers', 1)
+        assigned_count = len(selected_volunteers)
+
+        # ❌ No volunteer found
+        if assigned_count == 0:
+            db.collection('needs').document(need_id).update({
+                'status': 'open',
+                'assignedVolunteers': [],
+                'assignedCount': 0
+            })
+
+            return jsonify({'success': False, 'message': 'No matching volunteer found'})
+
+        # 🟡 Partial
+        elif assigned_count < required:
+            status = 'partial'
+
+        # 🟢 Full
+        else:
+            status = 'assigned'
+
+        # ✅ Update DB
+        db.collection('needs').document(need_id).update({
+            'status': status,
+            'assignedVolunteers': selected_volunteers,
+            'assignedCount': assigned_count,
+            'requiredVolunteers': required
+        })
+
+        return jsonify({'success': True, 'message': 'Volunteers assigned successfully!'})
+
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
+
+@app.route('/api/accept/<need_id>', methods=['POST'])
+def accept_need(need_id):
+    try:
+        data = request.json
+        volunteer_id = data['volunteerId']
+
+        db.collection('needs').document(need_id).update({
+            'status': 'in-progress',
+            'acceptedBy': volunteer_id
+        })
+
+        return jsonify({'success': True, 'message': 'Task accepted!'})
+
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
 
 # ==================== RUN ====================
 if __name__ == '__main__':

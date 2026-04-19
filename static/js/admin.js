@@ -166,11 +166,18 @@ async function loadAllNeeds() {
                             <span><i class="fas fa-circle" style="color: green"></i> ${need.status}</span>
                         </div>
                         <div style="margin-top: 15px; display: flex; gap: 10px;">
+                            
+                            <button class="btn-primary" 
+                                onclick="autoAssign('${doc.id}')">
+                                ⚡ Auto Assign
+                            </button>
+
                             <button class="btn-primary" 
                                 style="padding: 8px 20px; font-size: 13px; background: #d63031;"
                                 onclick="deleteNeed('${doc.id}')">
                                 <i class="fas fa-trash"></i> Delete
                             </button>
+
                         </div>
                     </div>
                 `;
@@ -200,4 +207,28 @@ function logout() {
     auth.signOut().then(() => {
         window.location.href = '/login';
     });
+}
+
+
+async function autoAssign(needId) {
+    alert("Clicked: " + needId);  
+
+    try {
+        const response = await fetch(`/api/auto-assign/${needId}`, {
+            method: 'POST'
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            alert("Assigned!");
+            loadAllNeeds();
+        } else {
+            alert("Failed: " + data.message);
+        }
+
+    } catch (error) {
+        console.error(error);
+        alert("Error!");
+    }
 }

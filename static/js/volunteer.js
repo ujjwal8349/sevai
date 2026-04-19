@@ -155,3 +155,14 @@ async function findAIMatches() {
         matchesContent.innerHTML = '<div class="empty-state"><h3>Error finding matches! Try again.</h3></div>';
     }
 }
+
+function logout() {
+    auth.signOut()
+        .then(() => {
+            window.location.href = '/login';
+        })
+        .catch((error) => {
+            console.error("Logout error:", error);
+            alert("Logout failed!");
+        });
+}
