@@ -3,6 +3,7 @@ from flask_cors import CORS
 from flask import redirect, request
 from dotenv import load_dotenv
 import os
+import json
 import google.generativeai as genai
 import firebase_admin
 from firebase_admin import credentials, firestore, auth
@@ -19,7 +20,10 @@ genai.configure(api_key=os.getenv('GEMINI_API_KEY'))
 
 # Firebase Setup
 if not firebase_admin._apps:
-    cred = credentials.Certificate('firebase-key.json')
+    firebase_key = os.getenv("FIREBASE_KEY")
+    cred_dict = json.loads(firebase_key)
+
+    cred = credentials.Certificate(cred_dict)
     firebase_admin.initialize_app(cred)
 
 db = firestore.client()
