@@ -129,7 +129,7 @@ def ai_match():
         }}
         """
 
-        response = client.models.generate_content(
+        response = genai.generate_content(
             model='gemini-2.0-flash-lite',
             contents=prompt
 )
