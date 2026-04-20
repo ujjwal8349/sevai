@@ -15,7 +15,7 @@ app.secret_key = os.getenv('SECRET_KEY')
 CORS(app)
 
 # Gemini AI Setup
-client = genai.configure(api_key=os.getenv('GEMINI_API_KEY'))
+genai.configure(api_key=os.getenv('GEMINI_API_KEY'))
 
 # Firebase Setup
 if not firebase_admin._apps:
