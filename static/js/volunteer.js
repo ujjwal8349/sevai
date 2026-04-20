@@ -1,5 +1,6 @@
 let currentUser = null;
 let userProfile = null;
+let allowNeedsLoad = false;
 
 // Auth State Check
 auth.onAuthStateChanged(async (user) => {
@@ -38,20 +39,23 @@ async function loadUserProfile(user) {
 }
 
 // Show Section
-function showSection(section) {
-    // Hide all sections
+function showSection(section, el) {
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.sidebar-menu li').forEach(l => l.classList.remove('active'));
 
-    // Show selected
     document.getElementById(section + 'Section').classList.add('active');
-    event.target.closest('li').classList.add('active');
+    if (el) el.classList.add('active');
 
-    if (section === 'needs') loadNeeds();
+    if (section === 'needs') {
+        allowNeedsLoad = true;   // 🔥 user clicked
+        loadNeeds();
+    }
 }
 
-// Load All Needs
+
+//Load AllNeeds
 async function loadNeeds() {
+    if (!allowNeedsLoad) return;
     const needsContent = document.getElementById('needsContent');
 
     needsContent.innerHTML = `
@@ -95,14 +99,14 @@ async function loadNeeds() {
                             }
 
                             ${
-                            need.status === 'in-progress' &&
-                            need.acceptedBy === auth.currentUser.uid
-                            ? `<button class="btn-primary" onclick="completeTask('${doc.id}')">
-                                    ✅ Mark Completed
-                            </button>`
-                            : ''
-                        }
-
+                                need.status === 'in-progress' &&
+                                auth.currentUser &&
+                                need.acceptedBy === auth.currentUser.uid
+                                ? `<button class="btn-primary" onclick="completeTask('${doc.id}')">
+                                        ✅ Mark Completed
+                                   </button>`
+                                : ''
+                            }
                         </div>
                     </div>
                 `;
@@ -110,8 +114,7 @@ async function loadNeeds() {
         } else {
             needsContent.innerHTML = `
                 <div class="empty-state">
-                    <i class="fas fa-list"></i>
-                    <h3>No needs available!</h3>
+                    <h3>No needs available</h3>
                 </div>
             `;
         }
@@ -120,11 +123,12 @@ async function loadNeeds() {
         console.error(error);
         needsContent.innerHTML = `
             <div class="empty-state">
-                <h3>Error loading needs!</h3>
+                <h3>Error loading needs</h3>
             </div>
         `;
     }
 }
+
 
 async function acceptTask(needId) {
     const user = auth.currentUser;
@@ -180,3 +184,5 @@ async function completeTask(needId) {
         alert("Error completing task!");
     }
 }
+
+

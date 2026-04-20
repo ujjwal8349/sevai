@@ -40,11 +40,15 @@
                 <h3 id="sidebarName">Loading...</h3>
                 <p id="sidebarLocation">📍 Location</p>
             </div>
+
             <ul class="sidebar-menu">
-                <li onclick="showSection('needs')">
+                <!-- All Needs -->
+                <li onclick="showSection('needs', this)" class="active">
                     <i class="fas fa-list"></i> All Needs
                 </li>
-                <li onclick="showSection('profile')">
+
+                <!-- My Profile -->
+                <li onclick="showSection('profile', this)">
                     <i class="fas fa-user"></i> My Profile
                 </li>
             </ul>
@@ -52,22 +56,22 @@
 
         <!-- MAIN CONTENT -->
         <div class="main-content">
+            <div id="needsContent">
+                <div class="welcome-box">
+                    <img src="/static/images/volunteer.jpg" class="welcome-img">
 
+                    <h2>🤝 Ready to Make a Difference?</h2>
+
+                    <p>
+                        Your small effort can change someone's life ❤️  
+                        Click "All Needs" from sidebar to start helping.
+                    </p>
+                </div>
+            </div>
 
             <!-- ALL NEEDS SECTION -->
             <div id="needsSection" class="section">
-                <div class="section-header">
-                    <h2>📋 All Community Needs</h2>
-                    <button class="btn-primary" onclick="loadNeeds()">
-                        <i class="fas fa-refresh"></i> Refresh
-                    </button>
-                </div>
-                <div id="needsContent">
-                    <div class="empty-state">
-                        <i class="fas fa-spinner fa-spin"></i>
-                        <h3>Loading needs...</h3>
-                    </div>
-                </div>
+                
             </div>
 
             <!-- PROFILE SECTION -->

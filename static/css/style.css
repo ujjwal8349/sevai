@@ -970,3 +970,14 @@ select {
     object-fit: contain;
     margin-right: 8px;
 }
+
+.welcome-box {
+    text-align: center;
+    padding: 40px;
+}
+
+.welcome-img {
+    width: 250px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}

@@ -278,6 +278,11 @@ def complete_need(need_id):
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
 
+@app.route('/volunteer')
+@app.route('/volunteer/<page>')
+def volunteer(page=None):
+    return render_template("volunteer_dashboard.html", active_page=page)
+
 
 # ==================== RUN ====================
 if __name__ == '__main__':
