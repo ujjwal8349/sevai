@@ -1,9 +1,6 @@
 # Environment Variables
 .env
 
-# Firebase Key
-firebase-key.json
-
 # Python
 __pycache__/
 *.pyc
